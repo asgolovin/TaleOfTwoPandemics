@@ -2,6 +2,8 @@
 
 What would happen if the Black Death pandemic would break out today?
 
+Group notes: https://yopad.eu/p/Tale-of-two-pandemics-365days
+
 ## Development Notes
 
 To install all packages, related to the project, start Julia, activate the virtual environment and install all packages:
