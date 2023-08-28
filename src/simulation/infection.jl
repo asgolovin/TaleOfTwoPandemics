@@ -13,7 +13,6 @@ function update_health!(agent, model)
             agent.time_until_recovery = 0
             agent.status = 0
         end
-    end
     return agent
 end
 
@@ -35,13 +34,13 @@ Propagate the infection between agent and other.
 function propagate_infection!(agent, other, model)
     infection_chance = get_infection_chance(agent, other, model)
     if agent.status == 1 && other.status == 0 #Agent1 is infected 
-        if rng >= infection_chance
-            other.status =
-                other.time_until_recovery = 8
+        if rand() >= infection_chance
+            other.status = 
+            other.time_until_recovery = 8
         end
     end
     if other.status == 1 && agent.status == 0 #agent2 is infected 
-        if rng >= infection_chance # wert wird durch startegies modifiziert
+        if rand() >= infection_chance # wert wird durch strategies modifiziert
             agent.status = 1
             agent.time_until_recovery = 8
         end
@@ -50,5 +49,5 @@ function propagate_infection!(agent, other, model)
 end
 
 function get_infection_chance(agent, other, model)
-    return 0.3
+   return 0.3
 end

@@ -20,17 +20,16 @@ function initialize_model(; num_agents=100)
     end
 
     # initialize graph
+    # create connections between agents
     for person in agents
         n_contacts = rand(1:10)
         for i in (1:n_contacts)
             contact = rand(model.agents)
-            # make connection edge
+            add_edge!(model.graph, person, contact)
         end
-
-
     end
 
-    # create connections between agents
+  
 
     # initialize q-tables
     # infect agents
