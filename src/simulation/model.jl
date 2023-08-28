@@ -70,7 +70,7 @@ end
 Select the other agent from the network with whom the interaction (opinion exchange and infection) takes place. 
 """
 function choose_contact(agent, model)
-    other = rand(1:num_agents)
+    other = rand(get_edges(model.graph, agent))
 
     return other
 end
