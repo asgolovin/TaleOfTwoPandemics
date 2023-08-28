@@ -8,7 +8,11 @@ export initialize_model
 Create the model from keyword arguments (`kwargs`). 
 """
 function initialize_model(; num_agents=100)
-    model = ABM(Agent, ContinuousSpace((100, 100)); properties=Dict(:graph => SimpleGraph(num_agents)))
+    properties = Dict(
+        :graph => SimpleGraph(num_agents),
+        :num_agents => num_agents
+    )
+    model = ABM(Agent, ContinuousSpace((100, 100)); properties)
 
     # create agents
 
@@ -24,12 +28,12 @@ function initialize_model(; num_agents=100)
     for person in agents
         n_contacts = rand(1:10)
         for i in (1:n_contacts)
-            contact = rand(model.agents)
-            add_edge!(model.graph, person, contact)
+            contact = rand(agents)
+            add_edge!(model.graph, (person.id, contact.id))
         end
     end
 
-  
+
 
     # initialize q-tables
     # infect agents
@@ -58,8 +62,11 @@ function agent_step!(agent, model)
     other = choose_contact(agent, model)
     propagate_knowledge!(agent, other, model)
 
+
     # infection propagation
+    println("BEFORE")
     propagate_infection!(agent, other, model)
+    println("AFTER")
 
     return agent
 end
@@ -70,7 +77,7 @@ end
 Select the other agent from the network with whom the interaction (opinion exchange and infection) takes place. 
 """
 function choose_contact(agent, model)
-    other = rand(1:num_agents)
+    other = rand(1:model.num_agents)
 
-    return other
+    return model[other]
 end
