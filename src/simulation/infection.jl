@@ -49,5 +49,5 @@ function propagate_infection!(agent, other, model)
 end
 
 function get_infection_chance(agent, other, model)
-    return 0.7
+    return 0.3
 end
