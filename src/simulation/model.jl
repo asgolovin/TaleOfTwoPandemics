@@ -24,8 +24,8 @@ function initialize_model(; num_agents=100)
     for person in agents
         n_contacts = rand(1:10)
         for i in (1:n_contacts)
-            contact = rand(model.agents)
-            add_edge!(model.graph, person, contact)
+            contact = rand(agents)
+            add_edge!(model.graph, (person.id, contact.id))
         end
     end
 
@@ -70,7 +70,8 @@ end
 Select the other agent from the network with whom the interaction (opinion exchange and infection) takes place. 
 """
 function choose_contact(agent, model)
-    other = rand(get_edges(model.graph, agent))
+    other = rand(1:model.num_agents)
 
-    return other
+    return model[other]
+    
 end
