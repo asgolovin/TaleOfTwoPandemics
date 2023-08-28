@@ -7,5 +7,6 @@ using Agents
     strategy::Dict{Int64,Float64}
     status::EpidemicStatus
     payoff::Float64
+    time_until_recovery::Int64
 end
 
