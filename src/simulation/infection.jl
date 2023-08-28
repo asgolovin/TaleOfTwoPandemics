@@ -14,6 +14,7 @@ function update_health!(agent, model)
             agent.status = 0
         end
     return agent
+    end
 end
 
 """
@@ -50,4 +51,10 @@ end
 
 function get_infection_chance(agent, other, model)
    return 0.3
+end
+
+function infect_single_agent!(agent, model)
+    agent.status = 1
+    agent.days_until_recovery = 8 
+    return agent
 end
