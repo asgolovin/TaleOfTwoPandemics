@@ -8,15 +8,15 @@ export initialize_model
 Create the model from keyword arguments (`kwargs`). 
 """
 function initialize_model(; num_agents=100)
-    model = ABM(Agent; properties = Dict(:graph => SimpleGraph(num_agents)))
+    model = ABM(Agent; properties=Dict(:graph => SimpleGraph(num_agents)))
 
     # create agents
-  
+
     agents = []
-    for i in range num_agents
-        new_agent = Agent(i, model)
+    for i in 1:num_agents
+        new_agent = Agent(i, Dict(), Dict{Int64,Float64}(), S, 0.0, 0)
         add_agent!(new_agent, model)
-        agents.append(new_agent)
+        push!(agents, new_agent)
     end
 
     # initialize graph
@@ -27,12 +27,12 @@ function initialize_model(; num_agents=100)
             # make connection edge
         end
 
-        
+
     end
 
     # create connections between agents
 
-      # initialize q-tables
+    # initialize q-tables
     # infect agents
 
 
