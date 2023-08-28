@@ -1,5 +1,6 @@
 using Random
 using SimpleGraphs
+export initialize_model
 
 """
     initialize_model(; kwargs)
@@ -7,10 +8,17 @@ using SimpleGraphs
 Create the model from keyword arguments (`kwargs`). 
 """
 function initialize_model(; num_agents=100)
+    model = ABM(Agent, graph)
+
     # create agents
     # initialize q-tables
     # infect agents
     agents = []
+    for i in range num_agents
+        new_agent = Agent(i, model)
+        add_agent!(new_agent, model)
+        agents.append(new_agent)
+    end
 
     # initialize graph
     # create connections between agents
