@@ -14,8 +14,7 @@ function gui(model)
         dimension=2,
     )
 
-    fig, ax, abmobs = abmplot(model; (agent_step!)=agent_step!, (model_step!)=nothing,
-        graphplotkwargs)
+    fig, ax, abmobs = abmplot(model; (agent_step!)=agent_step!, graphplotkwargs)
 
     return fig
 end
