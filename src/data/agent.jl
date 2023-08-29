@@ -4,7 +4,7 @@ using Agents
 
 @agent Agent ContinuousAgent{2} begin
     knowledge::Dict # maps states and actions to payoffs
-    strategy::Dict{Int64,Float64}
+    strategy::Dict{String,Bool}
     status::EpidemicStatus
     payoff::Float64
     time_until_recovery::Int64

@@ -23,7 +23,15 @@ end
 Change the percieved effectiveness of polices.
 """
 function update_strategy!(agent, model)
-
+    threshold = 0.7
+    agent.strategy = {}
+    for action in model.action_space.keys()
+        agent.strategy[action] = false
+        if agent.knowledge[agent.status][action] >= threshold
+            agent.strategy[action] = True
+        end
+    end
+    
     return agent
 end
 
