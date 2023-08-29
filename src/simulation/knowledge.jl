@@ -23,6 +23,28 @@ function update_evaluation!(agent, model)
 end
 
 function propagate_knowledge!(agent, other, model)
+  influence_strength = 0.3
+  repulsion_threshold = 10000 # no repulsion
+  total_diff = 0 
+  
+  for (state, action_space) in agent.knowledge
+    other_action_space = other.knowledge[state]
+    total_diff += sum(abs(action_space[a] - other_action_space[a]) for a in keys(action_space))
+  end
 
-    return agent, other
+  # Apply opinion dynamics using SJT rules based on the total difference
+  if total_diff < t
+    for (state, action_space) in agent.knowledge
+      other_action_space = other.knowledge[state]
+      for (action, value) in agent.knowledge[state]
+        other_value = other_action_space[action]
+        diff = abs(value - other_value)
+        if diff < repulsion_threshold
+          agent.knowledge[state][action] += (influence_strength * (other_value - value))
+          other.knowledge[state][action] += (influence_strength * (value - other_value))
+        end
+      end
+    end
+  end
+  return agent, other
 end
