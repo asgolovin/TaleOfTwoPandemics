@@ -44,12 +44,12 @@ Propagate the infection between agent and other.
 function propagate_infection!(agent, other, model)
     infection_chance = get_infection_chance(agent, other, model)
     if agent.status == I && other.status == S #Agent1 is infected 
-        if rand() >= infection_chance
+        if rand() < infection_chance
             infect_single_agent!(other, model)
         end
     end
     if other.status == I && agent.status == S #agent2 is infected 
-        if rand() >= infection_chance # wert wird durch strategies modifiziert
+        if rand() < infection_chance # wert wird durch strategies modifiziert
             infect_single_agent!(agent, model)
         end
     end
@@ -57,12 +57,12 @@ function propagate_infection!(agent, other, model)
 end
 
 function get_infection_chance(agent, other, model)
-   return 0.3
+    return model.infection_chance
 end
 
 function infect_single_agent!(agent, model)
     agent.status = I
     agent.previous_status = S
-    agent.time_until_recovery = 8 
+    agent.time_until_recovery = 8
     return agent
 end

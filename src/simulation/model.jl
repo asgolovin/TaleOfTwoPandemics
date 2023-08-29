@@ -7,7 +7,7 @@ export initialize_model
 
 Create the model from keyword arguments (`kwargs`). 
 """
-function initialize_model(; num_agents=100)
+function initialize_model(; num_agents=100, infection_chance=0.1)
     graph = SimpleGraph(num_agents)
     space = GraphSpace(graph)
 
@@ -21,7 +21,8 @@ function initialize_model(; num_agents=100)
 
     properties = Dict(
         :num_agents => num_agents,
-        :action_space => action_space
+        :action_space => action_space,
+        :infection_chance => infection_chance,
     )
 
     model = ABM(Agent, space; properties)
@@ -54,9 +55,10 @@ function initialize_model(; num_agents=100)
     end
 
     # infect agents
-    n_infected = max(1, 0.1 * num_agents)
-    for i in (1:n_infected)
-        infect_single_agent!(model.agents[rand(1:num_agents)], model)
+    for i in (1:num_agents)
+        if rand() < infection_chance
+            infect_single_agent!(model.agents[i], model)
+        end
     end
     return model
 end
@@ -79,7 +81,7 @@ function agent_step!(agent, model)
     # knowledge propagation
     # choose other agent
     other = choose_contact(agent, model)
-    propagate_knowledge!(agent, other, model)
+    #propagate_knowledge!(agent, other, model)
 
     # infection propagation
     propagate_infection!(agent, other, model)
