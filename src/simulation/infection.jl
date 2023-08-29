@@ -15,7 +15,6 @@ function update_health!(agent, model)
         end
     end
     return agent
-    end
 end
 
 """

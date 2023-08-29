@@ -8,10 +8,10 @@ export initialize_model
 Create the model from keyword arguments (`kwargs`). 
 """
 function initialize_model(; num_agents=100)
-    model = ABM(Agent, ContinuousSpace((100, 100)); properties=Dict(:graph => SimpleGraph(num_agents)))
+    model = ABM(Agent, ContinuousSpace((100, 100)); properties=Dict(:graph => SimpleGraph(num_agents),:action_space => Dict))
 
     # create agents
-
+ 
     agents = []
     for i in 1:num_agents
         new_agent = Agent(i, (0.0, 0.0), (0.0, 0.0), Dict(), Dict{Int64,Float64}(), S, 0.0, 0)
@@ -29,10 +29,29 @@ function initialize_model(; num_agents=100)
         end
     end
 
-  
+    #  initialize actions and objective usefulness 
+    model.action_space["Garlic"] = 0.2
+    model.action_space["Isolation"] = 0.9
+    model.action_space["Praying"] = 0.0
+    model.action_space["Blood Transfusion"] = -0.3
+    model.action_space["Washing Hands"] = 0.7
 
     # initialize q-tables
+    for person in agents
+        person.knowledge = {}
+        person.knowledge[S] = {}
+        person.knowledge[I] = {}
+        for action in model.action_space.keys()
+            person.knowledge[S][action] = rng()
+            person.knowledge[I][action] = rng()
+        end
+    end
+
     # infect agents
+    n_infected = max(1, 0.1*num_agents)
+    for i in (1:n_infected)
+        infect_single_agent!(random(model.agents), model)
+    end
 
 
     return model
