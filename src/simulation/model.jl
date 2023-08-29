@@ -39,7 +39,7 @@ function initialize_model(; num_agents=100)
             new_agent.knowledge[S][action] = rand()
             new_agent.knowledge[I][action] = rand()
         end
-        add_agent!(new_agent, model)
+        add_agent!(new_agent, i, model)
         push!(agents, new_agent)
     end
 
