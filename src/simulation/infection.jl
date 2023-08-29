@@ -7,12 +7,16 @@ Update any health parameters which do not depend on other agents.
 """
 function update_health!(agent, model)
     if agent.status == I
-        if agent.time_until_recovery > 1
-            agent.time_until_recovery -= 1
+        if agent.time_until_state_change > 1
+            agent.time_until_state_change -= 1
         else
-            agent.time_until_recovery = 0
-            agent.status = S
-            agent.previous_status = I
+            recover_single_agent!(agent, model)
+        end
+    elseif agent.status == R
+        if agent.time_until_state_change > 1
+            agent.time_until_state_change -= 1
+        else
+            end_recovery_immunity!(agent, model)
         end
     end
     return agent
@@ -63,6 +67,20 @@ end
 function infect_single_agent!(agent, model)
     agent.status = I
     agent.previous_status = S
-    agent.time_until_recovery = 8
+    agent.time_until_state_change = model.sickness_time
+    return agent
+end
+
+function recover_single_agent!(agent, model)
+    agent.status = R
+    agent.previous_status = I
+    agent.time_until_state_change = model.immunity_time
+    return agent
+end
+
+function end_recovery_immunity!(agent, model)
+    agent.status = S
+    agent.previous_status = R
+    agent.time_until_state_change = 0
     return agent
 end
