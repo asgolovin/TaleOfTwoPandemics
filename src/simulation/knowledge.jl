@@ -17,7 +17,7 @@ function update_evaluation!(agent, model)
     if value == true
         agent.knowledge[agent.status][key] *= modifier  
     end
-end
+   end
 
     return agent
 end
