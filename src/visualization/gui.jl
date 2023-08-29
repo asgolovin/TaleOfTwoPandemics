@@ -8,7 +8,7 @@ export gui
 
 function agent_color(agents)
     for agent in agents
-        return agent.status == S ? :green : :red
+        return agent.status == I ? :red : :green
     end
     return RGB(0, 0, 0)
 end

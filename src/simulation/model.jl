@@ -35,9 +35,11 @@ function initialize_model(; num_agents=100)
         new_agent.knowledge = Dict()
         new_agent.knowledge[S] = Dict()
         new_agent.knowledge[I] = Dict()
+        new_agent.knowledge[R] = Dict()
         for action in keys(model.action_space)
             new_agent.knowledge[S][action] = rand()
             new_agent.knowledge[I][action] = rand()
+            new_agent.knowledge[R][action] = new_agent.knowledge[S][action]
         end
         add_agent!(new_agent, i, model)
         push!(agents, new_agent)
