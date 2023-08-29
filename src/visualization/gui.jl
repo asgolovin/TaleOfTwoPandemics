@@ -14,6 +14,18 @@ function agent_color(agents)
 end
 
 function gui(model)
+
+    infected(a) = a.status == I
+    strategy(a) = collect(values(a.knowledge[S]))[1]
+
+    adata = [(infected, count), (strategy, sum)]
+
+    mdata = [:infection_chance]
+
+    params = Dict(
+        :infection_chance => 0.1:0.1:1.0
+    )
+
     graphplotkwargs = (
         layout=GraphMakie.Shell(), # node positions
         arrow_show=false, # hide directions of graph edges
@@ -22,7 +34,9 @@ function gui(model)
         edge_plottype=:linesegments, # needed for tapered edge widths
     )
 
-    fig, ax, abmobs = abmplot(model; (agent_step!)=agent_step!, ac=agent_color, graphplotkwargs)
+    fig, abmobs = abmexploration(model;
+        (agent_step!)=agent_step!, ac=agent_color, params, graphplotkwargs,
+        adata, alabels=["Infected", "Strategy"], mdata, mlabels=["infection chance"])
 
     return fig
 end
