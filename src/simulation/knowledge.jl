@@ -13,7 +13,7 @@ function update_evaluation!(agent, model)
     modifier = 1 # we learn nothing while sick?
   end
 
-  for (key, value) in agent.strategies
+  for (key, value) in agent.strategy
     if value == true
         agent.knowledge[agent.status][key] *= modifier  
     end

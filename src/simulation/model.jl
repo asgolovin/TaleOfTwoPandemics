@@ -85,8 +85,8 @@ end
 Select the other agent from the network with whom the interaction (opinion exchange and infection) takes place. 
 """
 function choose_contact(agent, model)
-    neighbors = neighbors(model.graph, agent)
+    neighbors = neighbors(model.graph, agent.id)
     random_neighbor_index = rand(1:length(neighbors))
     contact = neighbors[random_neighbor_index]
-    return contact
+    return model.agents[contact]
 end
