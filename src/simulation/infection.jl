@@ -29,7 +29,7 @@ function update_strategy!(agent, model)
     for action in keys(model.action_space)
         agent.strategy[action] = false
         if agent.knowledge[agent.status][action] >= threshold
-            agent.strategy[action] = True
+            agent.strategy[action] = true
         end
     end
 
