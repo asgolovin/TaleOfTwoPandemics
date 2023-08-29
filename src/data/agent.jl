@@ -6,6 +6,7 @@ using Agents
     knowledge::Dict # maps states and actions to payoffs
     strategy::Dict{String,Bool}
     status::EpidemicStatus
+    previous_status::EpidemicStatus
     payoff::Float64
     time_until_recovery::Int64
 end

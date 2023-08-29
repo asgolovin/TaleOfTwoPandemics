@@ -8,7 +8,7 @@ export initialize_model
 Create the model from keyword arguments (`kwargs`). 
 """
 function initialize_model(; num_agents=100)
-    model = ABM(Agent, ContinuousSpace((100, 100)); properties=Dict(:graph => SimpleGraph(num_agents),:action_space => Dict))
+    model = ABM(Agent, ContinuousSpace((100, 100)); properties=Dict(:graph => SimpleGraph(num_agents),:action_space => Dict()))
 
     #  initialize actions and objective usefulness 
     model.action_space["Garlic"] = 0.2
@@ -20,16 +20,15 @@ function initialize_model(; num_agents=100)
     # create agents
     agents = []
     for i in 1:num_agents
-        new_agent = Agent(i, (0.0, 0.0), (0.0, 0.0), Dict(), Dict{Int64,Float64}(), S, 0.0, 0)
+        new_agent = Agent(i, (0.0, 0.0), (0.0, 0.0), Dict(), Dict(), S, S, 0.0, 0)
         
-
          # initialize q-tables
-         new_agent.knowledge = {}
-         new_agent.knowledge[S] = {}
-         new_agent.knowledge[I] = {}
-         for action in model.action_space.keys()
-             new_agent.knowledge[S][action] = rng()
-             new_agent.knowledge[I][action] = rng()
+         new_agent.knowledge = Dict()
+         new_agent.knowledge[S] = Dict()
+         new_agent.knowledge[I] = Dict()
+         for action in keys(model.action_space)
+             new_agent.knowledge[S][action] = rand()
+             new_agent.knowledge[I][action] = rand()
          end
 
         add_agent!(new_agent, model)
@@ -49,7 +48,7 @@ function initialize_model(; num_agents=100)
     # infect agents
     n_infected = max(1, 0.1*num_agents)
     for i in (1:n_infected)
-        infect_single_agent!(random(model.agents), model)
+        infect_single_agent!(model.agents[rand(1:num_agents)], model)
     end
     return model
 end
@@ -87,6 +86,6 @@ Select the other agent from the network with whom the interaction (opinion excha
 """
 function choose_contact(agent, model)
     other = rand(1:model.num_agents)
-    return model[other]
+    return model.agents[other]
     
 end

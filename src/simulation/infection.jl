@@ -6,12 +6,13 @@ Update any health parameters which do not depend on other agents.
 (if the agent was infected, it becomes healthy again)
 """
 function update_health!(agent, model)
-    if agent.status == 1
+    if agent.status == I
         if agent.time_until_recovery > 1
             agent.time_until_recovery -= 1
         else
             agent.time_until_recovery = 0
-            agent.status = 0
+            agent.status = S
+            agent.previous_status = I
         end
     end
     return agent
@@ -24,14 +25,14 @@ Change the percieved effectiveness of polices.
 """
 function update_strategy!(agent, model)
     threshold = 0.7
-    agent.strategy = {}
-    for action in model.action_space.keys()
+    agent.strategy = Dict()
+    for action in keys(model.action_space)
         agent.strategy[action] = false
         if agent.knowledge[agent.status][action] >= threshold
             agent.strategy[action] = True
         end
     end
-    
+
     return agent
 end
 
@@ -44,14 +45,12 @@ function propagate_infection!(agent, other, model)
     infection_chance = get_infection_chance(agent, other, model)
     if agent.status == I && other.status == S #Agent1 is infected 
         if rand() >= infection_chance
-            other.status = I
-            other.time_until_recovery = 8
+            infect_single_agent!(other, model)
         end
     end
     if other.status == I && agent.status == S #agent2 is infected 
         if rand() >= infection_chance # wert wird durch strategies modifiziert
-            agent.status = I
-            agent.time_until_recovery = 8
+            infect_single_agent!(agent, model)
         end
     end
     return agent, other
@@ -63,6 +62,7 @@ end
 
 function infect_single_agent!(agent, model)
     agent.status = I
-    agent.days_until_recovery = 8 
+    agent.previous_status = S
+    agent.time_until_recovery = 8 
     return agent
 end
