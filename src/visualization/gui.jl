@@ -1,6 +1,8 @@
-using GLMakie
 using Graphs
+using Agents
+using GLMakie
 using GraphMakie
+using ColorTypes
 
 export gui
 
@@ -11,7 +13,6 @@ function gui(model)
         edge_color=:black, # change edge colors and widths with own functions
         edge_width=1,
         edge_plottype=:linesegments, # needed for tapered edge widths
-        dimension=2,
     )
 
     fig, ax, abmobs = abmplot(model; (agent_step!)=agent_step!, graphplotkwargs)
