@@ -35,3 +35,12 @@ For Windows, the location is `C:/Users/%username%/.julia/config/startup.jl` (I t
 #### 2. Set up automatic formatting on save
 
 In VSCode, go to Settings, search for "Format on Save" and check the box.
+
+#### 3. Fix a bug in Agents.jl
+
+Start a Julia REPL in the project folder. In the REPL, press `]` to go into the package manager mode. Then, remove the "official" Agents.jl library and add the fixed version:
+
+```julia
+rm Agents
+add https://github.com/asgolovin/Agents.jl
+```
