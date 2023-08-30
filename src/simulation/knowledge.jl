@@ -8,14 +8,14 @@ function update_evaluation!(agent, model)
 
   elseif agent.status == S
     # we reward all actions that were true (multiply with more than one)
-    modifier = 1 - rl_learn_factor
+    modifier = 1 + rl_learn_factor
   else 
     modifier = 1 # we learn nothing while sick?
   end
 
   for (key, value) in agent.strategy
     if value == true
-        min(agent.knowledge[agent.status][key] *= modifier, 1)
+      agent.knowledge[agent.status][key] = min(abs(agent.knowledge[agent.status][key] *= modifier), 1)
     end
    end
 

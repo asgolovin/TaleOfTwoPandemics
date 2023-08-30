@@ -29,7 +29,7 @@ function gui(model)
         end)
 
         push!(alabels, practice)
-        push!(adata, (eval(Symbol(practice)), sum))
+        push!(adata, (eval(Symbol(practice)), GLMakie._mean))
     end
 
     params = Dict(

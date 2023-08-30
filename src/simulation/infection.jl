@@ -24,11 +24,12 @@ end
 Change the percieved effectiveness of polices.
 """
 function update_strategy!(agent, model)
-    threshold = 0.7
+    threshold = 0.6
+    epsilon = 0.8
     agent.strategy = Dict()
     for action in keys(model.action_space)
         agent.strategy[action] = false
-        if agent.knowledge[agent.status][action] >= threshold
+        if agent.knowledge[agent.status][action] >= threshold || rand() >= epsilon
             agent.strategy[action] = true
         end
     end
@@ -57,7 +58,20 @@ function propagate_infection!(agent, other, model)
 end
 
 function get_infection_chance(agent, other, model)
-    return model.infection_chance
+    agent1_modifier = 1
+    agent2_modifier = 1
+
+    for (action, effectiveness) in model.action_space
+        if agent.strategy[action]
+            agent1_modifier -= effectiveness
+        end 
+        if other.strategy[action]
+            agent2_modifier -= effectiveness
+        end
+    end
+    agent1_modifier = max(agent1_modifier, 0)
+    agent2_modifier = max(agent2_modifier, 0)
+    return model.infection_chance * (agent1_modifier + agent2_modifier)
 end
 
 function infect_single_agent!(agent, model)

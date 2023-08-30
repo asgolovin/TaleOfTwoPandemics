@@ -18,7 +18,7 @@ function initialize_model(; num_agents=100, infection_chance=0.1)
     action_space["garlic"] = 0.2
     action_space["isolation"] = 0.9
     action_space["praying"] = 0.0
-    action_space["transfusion"] = -0.3
+    action_space["transfusion"] = 0.1
     action_space["handwashing"] = 0.7
 
     properties = Dict(
