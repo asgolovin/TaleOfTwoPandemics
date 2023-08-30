@@ -21,9 +21,18 @@ function initialize_model(; num_agents=100, infection_chance=0.1)
     action_space["transfusion"] = 0.1
     action_space["handwashing"] = 0.7
 
+    action_costs = Dict{String, Float64}()
+    action_costs["garlic"] = 0.5
+    action_costs["isolation"] = 0.9
+    action_costs["praying"] = 0.0
+    action_costs["transfusion"] = 0.8
+    action_costs["handwashing"] = 0.7
+
+
     properties = Dict(
         :num_agents => num_agents,
         :action_space => action_space,
+        :action_costs => action_costs,
         :infection_chance => infection_chance,
     )
 
