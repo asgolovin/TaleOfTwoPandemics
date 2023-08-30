@@ -15,7 +15,7 @@ function update_evaluation!(agent, model)
 
   for (key, value) in agent.strategy
     if value == true
-      cost_modifier = 1 - model.action_cost[key]  
+      cost_modifier = 1 - model.action_costs[key]  
       new_q_value = max(0, agent.knowledge[agent.status][key] * modifier * cost_modifier)
       agent.knowledge[agent.status][key] = min(new_q_value, 1)
     end
