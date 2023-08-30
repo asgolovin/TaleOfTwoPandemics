@@ -1,4 +1,8 @@
 using TaleOfTwoPandemics
 
-my_model = initialize_model(; num_agents=10)
+input_file = "../input/default.jl"
+
+include(input_file)
+
+my_model = initialize_model(params)
 fig = gui(my_model)
