@@ -1,4 +1,4 @@
-function update_evaluation!(agent, model)
+function update_knowledge!(agent, model)
   # we evaluate how we are doing based on: previous status, current status and chosen strategies 
   rl_learn_factor = 0.3
 
@@ -9,26 +9,26 @@ function update_evaluation!(agent, model)
   elseif agent.status == S
     # we reward all actions that were true (multiply with more than one)
     modifier = 1 + rl_learn_factor
-  else 
+  else
     modifier = 1 # we learn nothing while sick?
   end
 
   for (key, value) in agent.strategy
     if value == true
-      cost_modifier = 1 - model.action_costs[key]  
+      cost_modifier = 1 - model.action_costs[key]
       new_q_value = max(0, agent.knowledge[agent.status][key] * modifier * cost_modifier)
       agent.knowledge[agent.status][key] = min(new_q_value, 1)
     end
-   end
+  end
 
-    return agent
+  return agent
 end
 
 function propagate_knowledge!(agent, other, model)
   influence_strength = 0.3
   repulsion_threshold = 10000 # no repulsion
   minimum_difference = 0.3
-  total_diff = 0 
+  total_diff = 0
 
   for (state, action_space) in agent.knowledge
     other_action_space = other.knowledge[state]
@@ -48,18 +48,18 @@ function propagate_knowledge!(agent, other, model)
         end
       end
     end
-  elseif total_diff > t 
+  elseif total_diff > t
     for (state, action_space) in agent.knowledge
       other_action_space = other.knowledge[state]
       for (action, value) in agent.knowledge[state]
         other_value = other_action_space[action]
         diff = abs(value - other_value)
         if diff < repulsion_threshold
-          agent.knowledge[state][action] += (influence_strength * (value- other_value))
+          agent.knowledge[state][action] += (influence_strength * (value - other_value))
           other.knowledge[state][action] += (influence_strength * (other_value - value))
         end
       end
     end
-  end 
+  end
   return agent, other
 end

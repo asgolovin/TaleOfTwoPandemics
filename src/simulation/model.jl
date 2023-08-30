@@ -20,7 +20,6 @@ function initialize_model(params::InputParams)
     sickness_time = mparams.sickness_time
     immunity_time = mparams.immunity_time
     r = mparams.r
-    action_space = mparams.action_space
     practices = mparams.practices
     q_true = mparams.q_true
     cost = mparams.cost
@@ -45,26 +44,21 @@ function initialize_model(params::InputParams)
     # create agents
     agents = []
     for i in 1:num_agents
-        new_agent = Agent(i, i, Dict(), Dict(), S, S, 0.0, 0)
+        knowledge = Dict(practice => rand() for practice in practices)
+        strategy = Dict(practice => knowledge[practice] > 0.5 for practice in practices)
+        payoff = 1 + sum([cost[practice] * strategy[practice] for practice in practices])
 
-        # initialize q-tables
-        new_agent.knowledge = Dict()
-        new_agent.knowledge[S] = Dict()
-        new_agent.knowledge[I] = Dict()
-        new_agent.knowledge[R] = Dict()
-        for practice in model.practices
-            new_agent.knowledge[S][practice] = rand()
-            new_agent.knowledge[I][practice] = rand()
-            new_agent.knowledge[R][practice] = new_agent.knowledge[S][practice]
-        end
+        new_agent = Agent(i, i, knowledge, strategy, payoff, S, S, Inf64)
         add_agent!(new_agent, i, model)
         push!(agents, new_agent)
     end
 
     # infect agents
-    for i in (1:num_agents)
+    for (_, agent) in model.agents
         if rand() < infection_chance
-            infect_single_agent!(model.agents[i], model)
+            agent.status = I
+            agent.time_until_state_change = model.sickness_time
+            agent.payoff -= 1
         end
     end
     return model
@@ -76,22 +70,17 @@ end
 Evolve the agent one step in time.
 """
 function agent_step!(agent, model)
-    # do any health updates which depend on time
-    update_health!(agent, model)
-
-    # update the percieved value of policies
-    update_evaluation!(agent, model)
-
-    # update behavior
-    update_strategy!(agent, model)
-
-    # knowledge propagation
-    # choose other agent
+    # choose a neighboring agent
     other = choose_contact(agent, model)
-    #propagate_knowledge!(agent, other, model)
 
     # infection propagation
-    propagate_infection!(agent, other, model)
+    update_infection_status!(agent, other, model)
+
+    # update the percieved value of policies
+    #update_knowledge!(agent, other, model)
+
+    # update behavior
+    #update_strategy!(agent, model)
 
     return agent
 end
@@ -103,7 +92,6 @@ Select the other agent from the network with whom the interaction (opinion excha
 """
 function choose_contact(agent, model)
     neighborlist = neighbors(model.space.graph, agent.id)
-    random_neighbor_index = rand(1:length(neighborlist))
-    contact = neighborlist[random_neighbor_index]
-    return model.agents[contact]
+    neighbor_index = rand(neighborlist)
+    return model.agents[neighbor_index]
 end

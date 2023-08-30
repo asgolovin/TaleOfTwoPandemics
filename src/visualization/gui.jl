@@ -9,7 +9,13 @@ export gui
 
 function agent_color(agents)
     for agent in agents
-        return agent.status == I ? :red : :green
+        if agent.status == S
+            return :green
+        elseif agent.status == I
+            return :red
+        elseif agent.status == R
+            return :blue
+        end
     end
     return RGB(0, 0, 0)
 end
@@ -26,7 +32,7 @@ function gui(model)
 
     for practice in model.practices
         eval(quote
-            $(Symbol(practice))(a) = a.knowledge[S][$practice]
+            $(Symbol(practice))(a) = a.knowledge[$practice]
         end)
 
         push!(alabels, practice)
