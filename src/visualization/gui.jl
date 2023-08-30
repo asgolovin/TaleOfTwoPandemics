@@ -15,12 +15,22 @@ end
 
 function gui(model)
 
-    infected(a) = a.status == I
-    strategy(a) = collect(values(a.knowledge[S]))[1]
+    num_infected(a) = a.status == I
 
-    adata = [(infected, count), (strategy, sum)]
+    adata = Tuple{Function,Function}[]
+    alabels = []
 
-    mdata = [:infection_chance]
+    push!(adata, (num_infected, count))
+    push!(alabels, "# infected")
+
+    for practice in keys(model.action_space)
+        eval(quote
+            $(Symbol(practice))(a) = a.knowledge[S][$practice]
+        end)
+
+        push!(alabels, practice)
+        push!(adata, (eval(Symbol(practice)), sum))
+    end
 
     params = Dict(
         :infection_chance => 0.1:0.1:1.0
@@ -36,7 +46,7 @@ function gui(model)
 
     fig, abmobs = abmexploration(model;
         (agent_step!)=agent_step!, ac=agent_color, params, graphplotkwargs,
-        adata, alabels=["Infected", "Strategy"], mdata, mlabels=["infection chance"])
+        adata, alabels)
 
     return fig
 end

@@ -11,13 +11,15 @@ function initialize_model(; num_agents=100, infection_chance=0.1)
     graph = SimpleGraph(num_agents)
     space = GraphSpace(graph)
 
-    #  initialize actions and objective usefulness 
+    # initialize actions and objective usefulness 
+    # Note: the names of practices should be valid variable names (not contain spaces) 
+    # for the code generation in the GUI to work. 
     action_space = Dict{String,Float64}()
-    action_space["Garlic"] = 0.2
-    action_space["Isolation"] = 0.9
-    action_space["Praying"] = 0.0
-    action_space["Blood Transfusion"] = -0.3
-    action_space["Washing Hands"] = 0.7
+    action_space["garlic"] = 0.2
+    action_space["isolation"] = 0.9
+    action_space["praying"] = 0.0
+    action_space["transfusion"] = -0.3
+    action_space["handwashing"] = 0.7
 
     properties = Dict(
         :num_agents => num_agents,
