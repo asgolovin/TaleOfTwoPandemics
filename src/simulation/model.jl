@@ -1,6 +1,5 @@
 using Random
 using Graphs
-using StatsBase
 
 export initialize_model
 
@@ -18,6 +17,8 @@ function initialize_model(params::InputParams)
     graph_args = nparams.graph_args
 
     infection_chance = mparams.infection_chance
+    sickness_time = mparams.sickness_time
+    immunity_time = mparams.immunity_time
     r = mparams.r
     action_space = mparams.action_space
 
@@ -31,6 +32,8 @@ function initialize_model(params::InputParams)
         :action_space => action_space,
         :r => r,
         :infection_chance => infection_chance,
+        :sickness_time => sickness_time,
+        :immunity_time => immunity_time,
     )
 
     model = ABM(Agent, space; properties)

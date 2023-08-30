@@ -15,6 +15,10 @@ end
 @with_kw mutable struct ModelParams
     # Probability that a given node is infected
     infection_chance::Union{Float64,Vector{Float64}}
+    # Time that an agent remains in the I state
+    sickness_time::Union{Int64,Vector{Int64}}
+    # Time that an agent remains in the R state
+    immunity_time::Union{Int64,Vector{Int64}}
     # probability that an agent updates the q-values based on their own experience
     # TODO: rename
     r::Union{Float64,Vector{Float64}}

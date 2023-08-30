@@ -9,6 +9,8 @@ params = InputParams(
     ),
     ModelParams(
         infection_chance=0.1,
+        sickness_time=8,
+        immunity_time=15,
         r=0.5,
         action_space=Dict(
             "garlic" => (q_true=0.2, cost=0.2),
