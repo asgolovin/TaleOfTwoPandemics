@@ -9,7 +9,7 @@ export gui
 
 function agent_color(agents)
     for agent in agents
-        return agent.status == S ? :green : :red
+        return agent.status == I ? :red : :green
     end
     return RGB(0, 0, 0)
 end
@@ -24,13 +24,13 @@ function gui(model)
     push!(adata, (num_infected, count))
     push!(alabels, "# infected")
 
-    for practice in keys(model.action_space)
+    for practice in model.practices
         eval(quote
             $(Symbol(practice))(a) = a.knowledge[S][$practice]
         end)
 
         push!(alabels, practice)
-        push!(adata, (eval(Symbol(practice)),std ))
+        push!(adata, (eval(Symbol(practice)), std))
     end
 
     params = Dict(

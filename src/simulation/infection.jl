@@ -7,12 +7,16 @@ Update any health parameters which do not depend on other agents.
 """
 function update_health!(agent, model)
     if agent.status == I
-        if agent.time_until_recovery > 1
-            agent.time_until_recovery -= 1
+        if agent.time_until_state_change > 1
+            agent.time_until_state_change -= 1
         else
-            agent.time_until_recovery = 0
-            agent.status = S
-            agent.previous_status = I
+            recover_single_agent!(agent, model)
+        end
+    elseif agent.status == R
+        if agent.time_until_state_change > 1
+            agent.time_until_state_change -= 1
+        else
+            end_recovery_immunity!(agent, model)
         end
     end
     return agent
@@ -27,10 +31,10 @@ function update_strategy!(agent, model)
     threshold = 0.6
     epsilon = 0.8
     agent.strategy = Dict()
-    for action in keys(model.action_space)
-        agent.strategy[action] = false
-        if agent.knowledge[agent.status][action] >= threshold || rand() >= epsilon
-            agent.strategy[action] = true
+    for practice in model.practices
+        agent.strategy[practice] = false
+        if agent.knowledge[agent.status][practice] >= threshold || rand() >= epsilon
+            agent.strategy[practice] = true
         end
     end
 
@@ -61,11 +65,12 @@ function get_infection_chance(agent, other, model)
     agent1_modifier = 1
     agent2_modifier = 1
 
-    for (action, effectiveness) in model.action_space
-        if agent.strategy[action]
+    for practice in model.practices
+        effectiveness = model.q_true[practice]
+        if agent.strategy[practice]
             agent1_modifier -= effectiveness
-        end 
-        if other.strategy[action]
+        end
+        if other.strategy[practice]
             agent2_modifier -= effectiveness
         end
     end
@@ -77,6 +82,20 @@ end
 function infect_single_agent!(agent, model)
     agent.status = I
     agent.previous_status = S
-    agent.time_until_recovery = 8
+    agent.time_until_state_change = model.sickness_time
+    return agent
+end
+
+function recover_single_agent!(agent, model)
+    agent.status = R
+    agent.previous_status = I
+    agent.time_until_state_change = model.immunity_time
+    return agent
+end
+
+function end_recovery_immunity!(agent, model)
+    agent.status = S
+    agent.previous_status = R
+    agent.time_until_state_change = 0
     return agent
 end

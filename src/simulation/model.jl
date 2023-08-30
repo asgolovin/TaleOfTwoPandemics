@@ -1,5 +1,6 @@
 using Random
 using Graphs
+
 export initialize_model
 
 """
@@ -7,33 +8,36 @@ export initialize_model
 
 Create the model from keyword arguments (`kwargs`). 
 """
-function initialize_model(; num_agents=100, infection_chance=0.1)
-    graph = SimpleGraph(num_agents)
+function initialize_model(params::InputParams)
+    nparams = params.network_params
+    mparams = params.model_params
+
+    num_agents = nparams.num_agents
+    graph_generator = nparams.graph_generator
+    graph_args = nparams.graph_args
+
+    infection_chance = mparams.infection_chance
+    sickness_time = mparams.sickness_time
+    immunity_time = mparams.immunity_time
+    r = mparams.r
+    action_space = mparams.action_space
+    practices = mparams.practices
+    q_true = mparams.q_true
+    cost = mparams.cost
+
+    # initialize the graph
+    graph = graph_generator(graph_args...)
     space = GraphSpace(graph)
-
-    # initialize actions and objective usefulness 
-    # Note: the names of practices should be valid variable names (not contain spaces) 
-    # for the code generation in the GUI to work. 
-    action_space = Dict{String,Float64}()
-    action_space["garlic"] = 0.2
-    action_space["isolation"] = 0.9
-    action_space["praying"] = 0.0
-    action_space["transfusion"] = 0.1
-    action_space["handwashing"] = 0.7
-
-    action_costs = Dict{String, Float64}()
-    action_costs["garlic"] = 0.5
-    action_costs["isolation"] = 0.9
-    action_costs["praying"] = 0.0
-    action_costs["transfusion"] = 0.8
-    action_costs["handwashing"] = 0.7
-
 
     properties = Dict(
         :num_agents => num_agents,
-        :action_space => action_space,
-        :action_costs => action_costs,
+        :practices => practices,
+        :q_true => q_true,
+        :cost => cost,
+        :r => r,
         :infection_chance => infection_chance,
+        :sickness_time => sickness_time,
+        :immunity_time => immunity_time,
     )
 
     model = ABM(Agent, space; properties)
@@ -47,22 +51,14 @@ function initialize_model(; num_agents=100, infection_chance=0.1)
         new_agent.knowledge = Dict()
         new_agent.knowledge[S] = Dict()
         new_agent.knowledge[I] = Dict()
-        for action in keys(model.action_space)
-            new_agent.knowledge[S][action] = rand()
-            new_agent.knowledge[I][action] = rand()
+        new_agent.knowledge[R] = Dict()
+        for practice in model.practices
+            new_agent.knowledge[S][practice] = rand()
+            new_agent.knowledge[I][practice] = rand()
+            new_agent.knowledge[R][practice] = new_agent.knowledge[S][practice]
         end
         add_agent!(new_agent, i, model)
         push!(agents, new_agent)
-    end
-
-    for person in agents
-        # initialize graph
-        # create connections between agents
-        n_contacts = rand(1:10)
-        for i in (1:n_contacts)
-            contact = rand(agents)
-            add_edge!(model, (person.id, contact.id))
-        end
     end
 
     # infect agents
