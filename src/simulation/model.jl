@@ -1,5 +1,7 @@
 using Random
 using Graphs
+using StatsBase
+
 export initialize_model
 
 """
@@ -7,23 +9,27 @@ export initialize_model
 
 Create the model from keyword arguments (`kwargs`). 
 """
-function initialize_model(; num_agents=100, infection_chance=0.1)
-    graph = SimpleGraph(num_agents)
-    space = GraphSpace(graph)
+function initialize_model(params::InputParams)
+    nparams = params.network_params
+    mparams = params.model_params
 
-    # initialize actions and objective usefulness 
-    # Note: the names of practices should be valid variable names (not contain spaces) 
-    # for the code generation in the GUI to work. 
-    action_space = Dict{String,Float64}()
-    action_space["garlic"] = 0.2
-    action_space["isolation"] = 0.9
-    action_space["praying"] = 0.0
-    action_space["transfusion"] = -0.3
-    action_space["handwashing"] = 0.7
+    num_agents = nparams.num_agents
+    graph_generator = nparams.graph_generator
+    graph_args = nparams.graph_args
+
+    infection_chance = mparams.infection_chance
+    r = mparams.r
+    action_space = mparams.action_space
+
+    # initialize the graph
+    graph = graph_generator(graph_args...)
+
+    space = GraphSpace(graph)
 
     properties = Dict(
         :num_agents => num_agents,
         :action_space => action_space,
+        :r => r,
         :infection_chance => infection_chance,
     )
 
@@ -44,16 +50,6 @@ function initialize_model(; num_agents=100, infection_chance=0.1)
         end
         add_agent!(new_agent, i, model)
         push!(agents, new_agent)
-    end
-
-    for person in agents
-        # initialize graph
-        # create connections between agents
-        n_contacts = rand(1:10)
-        for i in (1:n_contacts)
-            contact = rand(agents)
-            add_edge!(model, (person.id, contact.id))
-        end
     end
 
     # infect agents
