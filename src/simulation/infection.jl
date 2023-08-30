@@ -54,7 +54,7 @@ function update_strategy!(agent, model)
     agent.strategy = Dict()
     for practice in model.practices
         agent.strategy[practice] = false
-        if agent.knowledge[agent.status][practice] >= threshold || rand() >= epsilon
+        if agent.knowledge[practice] >= threshold || rand() >= epsilon
             agent.strategy[practice] = true
         end
     end

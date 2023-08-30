@@ -80,7 +80,7 @@ function agent_step!(agent, model)
     update_knowledge!(agent, other, model)
 
     # update behavior
-    #update_strategy!(agent, model)
+    update_strategy!(agent, model)
 
     return agent
 end
