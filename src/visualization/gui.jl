@@ -3,6 +3,7 @@ using Agents
 using GLMakie
 using GraphMakie
 using ColorTypes
+using Statistics
 
 export gui
 
