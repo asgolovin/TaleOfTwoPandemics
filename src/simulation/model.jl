@@ -77,7 +77,7 @@ function agent_step!(agent, model)
     update_infection_status!(agent, other, model)
 
     # update the percieved value of policies
-    #update_knowledge!(agent, other, model)
+    update_knowledge!(agent, other, model)
 
     # update behavior
     #update_strategy!(agent, model)

@@ -1,4 +1,4 @@
-function update_knowledge!(agent, model)
+function update_knowledge!(agent, other, model)
   # we evaluate how we are doing based on: previous status, current status and chosen strategies 
   rl_learn_factor = 0.3
 
@@ -13,11 +13,11 @@ function update_knowledge!(agent, model)
     modifier = 1 # we learn nothing while sick?
   end
 
-  for (key, value) in agent.strategy
-    if value == true
-      cost_modifier = 1 - model.action_costs[key]
-      new_q_value = max(0, agent.knowledge[agent.status][key] * modifier * cost_modifier)
-      agent.knowledge[agent.status][key] = min(new_q_value, 1)
+  for (practice, isactive) in agent.strategy
+    if isactive
+      cost_modifier = 1 - model.cost[practice]
+      new_q_value = max(0, agent.knowledge[practice] * modifier * cost_modifier)
+      agent.knowledge[practice] = min(new_q_value, 1)
     end
   end
 
