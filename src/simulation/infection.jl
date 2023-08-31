@@ -49,7 +49,7 @@ end
 Change the percieved effectiveness of polices.
 """
 function update_strategy!(agent, model)
-    threshold = 0.5
+    threshold = model.action_threshold
     for practice in model.practices
         agent.strategy[practice] = agent.knowledge[practice] >= threshold
     end
@@ -64,13 +64,11 @@ function get_infection_chance(agent, other, model)
     for practice in model.practices
         effectiveness = model.q_true[practice]
         if agent.strategy[practice]
-            agent1_modifier -= effectiveness
+            agent1_modifier *= (1 - effectiveness)
         end
         if other.strategy[practice]
-            agent2_modifier -= effectiveness
+            agent2_modifier *= (1 - effectiveness)
         end
     end
-    agent1_modifier = max(agent1_modifier, 0)
-    agent2_modifier = max(agent2_modifier, 0)
-    return model.infection_chance * (agent1_modifier + agent2_modifier)
+    return model.infection_chance * agent1_modifier * agent2_modifier
 end
