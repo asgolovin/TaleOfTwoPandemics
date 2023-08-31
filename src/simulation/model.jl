@@ -40,9 +40,10 @@ function initialize_model(params::InputParams)
     agents = []
     for i in 1:num_agents
         knowledge = Dict(practice => rand() for practice in practices)
-        strategy = Dict(practice => knowledge[practice] > model.action_threshold for practice in practices)
-
+        strategy = Dict(practice => false for practice in practices)
         new_agent = Agent(i, i, knowledge, strategy, S, S, Inf64)
+        update_strategy!(new_agent, model)
+
         add_agent!(new_agent, i, model)
         push!(agents, new_agent)
     end
@@ -95,8 +96,8 @@ function payoff(agent, model)
     result = 1 + sum([cost[practice] * agent.strategy[practice] for practice in practices])
 
     # pennalty for becomming sick in the previous round
-    if agent.status == I && agent.previous_status == S
-        result -= 1
+    if agent.status == I
+        result -= 2
     end
 
     return result
