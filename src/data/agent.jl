@@ -32,3 +32,11 @@ function Base.show(io::IO, ::MIME"text/plain", agent::Agent)
         println(io, "  $practice => $(round(agent.knowledge[practice]; digits=2)) ($isactive)")
     end
 end
+
+function get_status(agent, model)
+    if agent.status == I
+        return 1
+    else    
+        return 0
+    end
+end

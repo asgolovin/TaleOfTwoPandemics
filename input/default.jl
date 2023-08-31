@@ -3,9 +3,9 @@ using Graphs
 
 params = InputParams(
     NetworkParams(
-        num_agents=10,
+        num_agents=500,
         graph_generator=watts_strogatz,
-        graph_args=(10, 4, 0.3),
+        graph_args=(500, 4, 0.3),
     ),
     ModelParams(
         infection_chance=0.1,
