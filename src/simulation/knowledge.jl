@@ -3,9 +3,10 @@ function update_knowledge!(agent, other, model)
 
   ΔQsocial = social_update(agent, other, model)
   ΔQlearn = learning_update(agent, model)
+  ΔQstoch = stochastic_update(agent, model)
 
   for practice in model.practices
-    ΔQ = r * ΔQsocial[practice] + (1 - r) * ΔQlearn[practice]
+    ΔQ = r * ΔQsocial[practice] + (1 - r) * ΔQlearn[practice] + ΔQstoch[practice]
     agent.knowledge[practice] += ΔQ
     agent.knowledge[practice] = min(max(agent.knowledge[practice], 0), 1)
   end
@@ -47,7 +48,7 @@ end
 
 function learning_update(agent, model)
   ΔQlearn = Dict(practice => 0.0 for practice in model.practices)
-  direction = sign(payoff(agent, model))
+  direction = fermi(payoff(agent, model), model.β, 0) * 2 - 1
   Qagent = agent.knowledge
 
   for practice in model.practices
@@ -55,6 +56,15 @@ function learning_update(agent, model)
     ΔQlearn[practice] = direction * isactive * (1 - Qagent[practice]) * 0.5
   end
   return ΔQlearn
+end
+
+function stochastic_update(agent, model)
+  ΔQstoch = Dict(practice => 0.0 for practice in model.practices)
+
+  for practice in model.practices
+    ΔQstoch[practice] = model.stoch_update * (rand() * 2 - 1)
+  end
+  return ΔQstoch
 end
 
 function fermi(x, β, mean)
