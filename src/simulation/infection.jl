@@ -22,7 +22,9 @@ end
 
 function next_status(agent, other, model)
     if agent.status == S
-        if other.status != I
+        if rand() < model.spontaneous_infection_chance / model.num_agents
+            return I
+        elseif other.status != I
             return S
         end
         infection_chance = get_infection_chance(agent, other, model)

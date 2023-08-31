@@ -6,8 +6,8 @@ using Statistics
 input_file = "../input/default.jl"
 
 include(input_file)
-trials = 100
-steps = 1000
+trials = 150
+steps = 200
 
 s = SobolSeq(7)
 param_names = ["infection_chance","sickness_time",
@@ -19,9 +19,10 @@ for name in param_names
     param_ranges[name] = []
 end
 
-start_point = 2
-middle_point = Int(round(steps/2))
-end_point = steps - 2 
+goal_points = [10, 40, 30, 60, 80, 40, 20, 10, 40, 20, 15]
+time_points = range(start = 1, stop = steps, length= length(goal_points))
+time_points = Int.(round.(collect(time_points)))
+print(time_points)
 
 # todo: make number of points variable!
 results = Dict()
@@ -43,7 +44,7 @@ for combo in (0:trials)
     my_model = initialize_model(params)
     for i in (1:steps)
         step!(my_model, TaleOfTwoPandemics.agent_step!)
-        if i == start_point || i == middle_point || i == end_point
+        if in(i, time_points)
             n_infected = 0
             for (id, p) in my_model.agents
               n_infected += TaleOfTwoPandemics.get_status(p, my_model)
@@ -51,22 +52,15 @@ for combo in (0:trials)
             push!(results[combo]["n_infected"], n_infected )
         end        
     end
-    println("performed experiment "+combo+" of "+trials)
+    println("performed experiment ", combo, " of ", trials )
 end
-
-target_start = 50
-target_middle = 200
-target_end = 70
 
 result_evaluated = Dict()
 best_index = 0
 global best_diff = 10000000000
 for (entry, data) in results
-    p1 = abs(data["n_infected"][1] - target_start)
-    p2 = abs(data["n_infected"][2] - target_middle)
-    p3 = abs(data["n_infected"][3] - end_point)
-    list = [p1, p2, p3]
-    res = mean(list)
+    list = data["n_infected"] - goal_points
+    res = abs(mean(list))
     if  <=(res, best_diff)
         global best_diff = res
         global best_index = entry
@@ -74,9 +68,9 @@ for (entry, data) in results
     result_evaluated[entry] = [res, list]
 end
 
-print(best_index)
-print(best_diff)
-print(results[best_index])
+println(best_index)
+println(best_diff)
+println(results[best_index])
 
 
     
