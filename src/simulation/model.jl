@@ -93,11 +93,11 @@ end
 function payoff(agent, model)
     cost = model.cost
     practices = model.practices
-    result = 1 + sum([cost[practice] * agent.strategy[practice] for practice in practices])
+    result = 0.5 + sum([cost[practice] * agent.strategy[practice] for practice in practices])
 
-    # penalty for becomming sick in the previous round
+    # penalty for becomming sick
     if agent.status == I
-        result -= 2
+        result -= 1
     end
 
     return result

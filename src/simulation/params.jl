@@ -15,6 +15,10 @@ end
 @with_kw mutable struct ModelParams
     # Probability that a given node is infected
     infection_chance::Union{Float64,Vector{Float64}}
+    # Probability that at least one node stochastically becomes infected during a time-step
+    spontaneous_infection_chance::Union{Float64,Vector{Float64}}
+    # The maximum magnitude of a stochastic update of the q-values
+    stoch_update::Union{Float64,Vector{Float64}}
     # Time that an agent remains in the I state
     sickness_time::Union{Int64,Vector{Int64}}
     # Time that an agent remains in the R state
@@ -23,8 +27,7 @@ end
     # TODO: rename
     r::Union{Float64,Vector{Float64}}
     # Parameter controlling by how much are we moving towards the other person,
-    # even if the person has a lower payoff. 
-    # High = 
+    # even if the person has a lower payoff.
     β::Union{Float64,Vector{Float64}}
     # The minimum distance between two vectors of q-values that is needed for the 
     # agents to listen to each other.
