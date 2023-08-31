@@ -41,7 +41,6 @@ for combo in (0:trials)
     end
     results[combo]["n_infected"] = []
     my_model = initialize_model(params)
-    print("Model initialized")
     for i in (1:steps)
         step!(my_model, TaleOfTwoPandemics.agent_step!)
         if i == start_point || i == middle_point || i == end_point
@@ -52,7 +51,7 @@ for combo in (0:trials)
             push!(results[combo]["n_infected"], n_infected )
         end        
     end
-    print("performed one experiment")
+    println("performed experiment "+combo+" of "+trials)
 end
 
 target_start = 50
