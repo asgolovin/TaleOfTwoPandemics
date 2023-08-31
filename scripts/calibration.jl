@@ -6,8 +6,8 @@ using Statistics
 input_file = "../input/default.jl"
 
 include(input_file)
-trials = 200
-steps = 20000
+trials = 100
+steps = 1000
 
 s = SobolSeq(7)
 param_names = ["infection_chance","sickness_time",
@@ -19,6 +19,11 @@ for name in param_names
     param_ranges[name] = []
 end
 
+start_point = 2
+middle_point = Int(round(steps/2))
+end_point = steps - 2 
+
+# todo: make number of points variable!
 results = Dict()
 for combo in (0:trials)
     results[combo] = Dict()
@@ -36,31 +41,31 @@ for combo in (0:trials)
     end
     results[combo]["n_infected"] = []
     my_model = initialize_model(params)
+    print("Model initialized")
     for i in (1:steps)
         step!(my_model, TaleOfTwoPandemics.agent_step!)
-        n_infected = 0
-        for (id, p) in my_model.agents
-            n_infected += TaleOfTwoPandemics.get_status(p, my_model)
-        end
-        push!(results[combo]["n_infected"], n_infected )
+        if i == start_point || i == middle_point || i == end_point
+            n_infected = 0
+            for (id, p) in my_model.agents
+              n_infected += TaleOfTwoPandemics.get_status(p, my_model)
+            end
+            push!(results[combo]["n_infected"], n_infected )
+        end        
     end
+    print("performed one experiment")
 end
 
 target_start = 50
 target_middle = 200
 target_end = 70
 
-start_point = 2
-middle_point = Int(round(steps/2))
-end_point = steps - 2 
-
 result_evaluated = Dict()
 best_index = 0
 global best_diff = 10000000000
 for (entry, data) in results
-    p1 = abs(data["n_infected"][start_point] - target_start)
-    p2 = abs(data["n_infected"][middle_point] - target_middle)
-    p3 = abs(data["n_infected"][end_point] - end_point)
+    p1 = abs(data["n_infected"][1] - target_start)
+    p2 = abs(data["n_infected"][2] - target_middle)
+    p3 = abs(data["n_infected"][3] - end_point)
     list = [p1, p2, p3]
     res = mean(list)
     if  <=(res, best_diff)
