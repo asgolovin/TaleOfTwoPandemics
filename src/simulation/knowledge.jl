@@ -33,7 +33,7 @@ function social_update(agent, other, model)
   # if they are similar enough, update the opinion of agent based on the opinion of the 
   # other
   β = model.β
-  Δpayoff = other.payoff - agent.payoff
+  Δpayoff = payoff(other, model) - payoff(agent, model)
 
   # weight the opinion of the other agent depending on the Δpayoff
   weight = fermi(Δpayoff, β, 0)
@@ -47,7 +47,7 @@ end
 
 function learning_update(agent, model)
   ΔQlearn = Dict(practice => 0.0 for practice in model.practices)
-  direction = sign(agent.payoff)
+  direction = sign(payoff(agent, model))
   Qagent = agent.knowledge
 
   for practice in model.practices

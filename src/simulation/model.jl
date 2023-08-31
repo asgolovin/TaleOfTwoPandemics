@@ -41,9 +41,8 @@ function initialize_model(params::InputParams)
     for i in 1:num_agents
         knowledge = Dict(practice => rand() for practice in practices)
         strategy = Dict(practice => knowledge[practice] > model.action_threshold for practice in practices)
-        payoff = 1 + sum([cost[practice] * strategy[practice] for practice in practices])
 
-        new_agent = Agent(i, i, knowledge, strategy, payoff, S, S, Inf64)
+        new_agent = Agent(i, i, knowledge, strategy, S, S, Inf64)
         add_agent!(new_agent, i, model)
         push!(agents, new_agent)
     end
@@ -53,7 +52,6 @@ function initialize_model(params::InputParams)
         if rand() < infection_chance
             agent.status = I
             agent.time_until_state_change = model.sickness_time
-            agent.payoff -= 1
         end
     end
     return model
@@ -89,4 +87,17 @@ function choose_contact(agent, model)
     neighborlist = neighbors(model.space.graph, agent.id)
     neighbor_index = rand(neighborlist)
     return model.agents[neighbor_index]
+end
+
+function payoff(agent, model)
+    cost = model.cost
+    practices = model.practices
+    result = 1 + sum([cost[practice] * agent.strategy[practice] for practice in practices])
+
+    # pennalty for becomming sick in the previous round
+    if agent.status == I && agent.previous_status == S
+        result -= 1
+    end
+
+    return result
 end

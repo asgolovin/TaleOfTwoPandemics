@@ -7,7 +7,6 @@ using Agents
     knowledge::Dict{String,Float64}
     # Maps the practices to true if the practice is active
     strategy::Dict{String,Bool}
-    payoff::Float64
     status::EpidemicStatus
     previous_status::EpidemicStatus
     time_until_state_change::Float64
@@ -32,5 +31,4 @@ function Base.show(io::IO, ::MIME"text/plain", agent::Agent)
         isactive = agent.strategy[practice] ? "active" : "inactive"
         println(io, "  $practice => $(round(agent.knowledge[practice]; digits=2)) ($isactive)")
     end
-    println(io, "payoff: $(agent.payoff)")
 end
