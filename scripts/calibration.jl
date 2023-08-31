@@ -2,15 +2,16 @@ using TaleOfTwoPandemics
 using Sobol
 using Agents
 using Statistics
+using LinearAlgebra
 
 input_file = "../input/default.jl"
 
 include(input_file)
 trials = 150
-steps = 200
+steps = 400
 
-s = SobolSeq(7)
-param_names = ["infection_chance","sickness_time",
+s = SobolSeq(8)
+param_names = ["infection_chance","sickness_time","spontaneous_infection_chance",
 "immunity_time", "r", "β",
 "similarity_threshold", "action_threshold"]
 param_ranges = Dict()
@@ -19,7 +20,7 @@ for name in param_names
     param_ranges[name] = []
 end
 
-goal_points = [10, 40, 30, 60, 80, 40, 20, 10, 40, 20, 15]
+goal_points = [20, 40, 30, 60, 80, 40, 20, 10, 40, 20, 15]
 time_points = range(start = 1, stop = steps, length= length(goal_points))
 time_points = Int.(round.(collect(time_points)))
 print(time_points)
@@ -33,6 +34,8 @@ for combo in (0:trials)
     for name in param_names
         if name == "immunity_time" || name == "sickness_time"
             val = Int(round(10 * x[i]))
+        elseif name == "spontaneous_infection_chance"
+            val = x[i] * 0.1
         else 
             val = x[i]
         end
@@ -60,7 +63,9 @@ best_index = 0
 global best_diff = 10000000000
 for (entry, data) in results
     list = data["n_infected"] - goal_points
-    res = abs(mean(list))
+    res2 = norm(data["n_infected"] - goal_points)
+    res = abs(median(list))
+
     if  <=(res, best_diff)
         global best_diff = res
         global best_index = entry
@@ -71,8 +76,3 @@ end
 println(best_index)
 println(best_diff)
 println(results[best_index])
-
-
-    
-
- 

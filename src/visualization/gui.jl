@@ -19,20 +19,20 @@ function agent_marker(agents)
     end
 end
 
-# function agent_color(agents)
-#     for agent in agents
-#         if agent.status == S
-#             return :green
-#         elseif agent.status == I
-#             return :red
-#         elseif agent.status == R
-#             return :blue
-#         end
-#     end
-#     return RGB(0, 0, 0)
-# end
+ function agent_color(agents)
+    for agent in agents
+        if agent.status == S
+            return :green
+        elseif agent.status == I
+            return :red
+        elseif agent.status == R
+            return :blue
+        end
+    end
+    return RGB(0, 0, 0)
+end 
 
-function agent_color(agents)
+#= function agent_color(agents)
     practice = "handwashing"
     for agent in agents
         if agent.strategy[practice]
@@ -42,10 +42,10 @@ function agent_color(agents)
         end
     end
     return RGB(0, 0, 0)
-end
+end =#
 
 function agent_size(agents)
-    practice = "handwashing"
+    practice = "Handwashing"
     for agent in agents
         return 7 + agent.knowledge[practice] * 40
     end
@@ -85,7 +85,9 @@ function gui(model)
     end
 
     params = Dict(
-        :infection_chance => 0.1:0.1:1.0
+        :similarity_threshold => 0.1:0.1:1.0,
+        :r => 0.1:0.1:1.0,
+        :β => 0.1:0.1:1.0
     )
 
     graphplotkwargs = (
