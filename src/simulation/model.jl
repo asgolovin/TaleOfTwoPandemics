@@ -1,5 +1,6 @@
 using Random
 using Graphs
+using DrWatson
 
 export initialize_model
 
@@ -17,9 +18,6 @@ function initialize_model(params::InputParams)
     graph_args = nparams.graph_args
 
     infection_chance = mparams.infection_chance
-    sickness_time = mparams.sickness_time
-    immunity_time = mparams.immunity_time
-    r = mparams.r
     practices = mparams.practices
     q_true = mparams.q_true
     cost = mparams.cost
@@ -33,10 +31,7 @@ function initialize_model(params::InputParams)
         :practices => practices,
         :q_true => q_true,
         :cost => cost,
-        :r => r,
-        :infection_chance => infection_chance,
-        :sickness_time => sickness_time,
-        :immunity_time => immunity_time,
+        struct2dict(mparams)...,
     )
 
     model = ABM(Agent, space; properties)
@@ -45,7 +40,7 @@ function initialize_model(params::InputParams)
     agents = []
     for i in 1:num_agents
         knowledge = Dict(practice => rand() for practice in practices)
-        strategy = Dict(practice => knowledge[practice] > 0.5 for practice in practices)
+        strategy = Dict(practice => knowledge[practice] > model.action_threshold for practice in practices)
         payoff = 1 + sum([cost[practice] * strategy[practice] for practice in practices])
 
         new_agent = Agent(i, i, knowledge, strategy, payoff, S, S, Inf64)

@@ -49,14 +49,9 @@ end
 Change the percieved effectiveness of polices.
 """
 function update_strategy!(agent, model)
-    threshold = 0.6
-    epsilon = 0.8
-    agent.strategy = Dict()
+    threshold = 0.5
     for practice in model.practices
-        agent.strategy[practice] = false
-        if agent.knowledge[practice] >= threshold || rand() >= epsilon
-            agent.strategy[practice] = true
-        end
+        agent.strategy[practice] = agent.knowledge[practice] >= threshold
     end
 
     return agent

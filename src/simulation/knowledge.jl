@@ -1,27 +1,53 @@
 function update_knowledge!(agent, other, model)
-  # we evaluate how we are doing based on: previous status, current status and chosen strategies 
-  rl_learn_factor = 0.3
+  r = model.r
 
-  if agent.status == I && agent.previous_status == S
-    # we punsih all actions that were true (multiply with less than 1)
-    modifier = 1 - rl_learn_factor
+  ΔQsocial = social_update(agent, other, model)
+  ΔQlearn = learning_update(agent, model)
 
-  elseif agent.status == S
-    # we reward all actions that were true (multiply with more than one)
-    modifier = 1 + rl_learn_factor
-  else
-    modifier = 1 # we learn nothing while sick?
-  end
-
-  for (practice, isactive) in agent.strategy
-    if isactive
-      cost_modifier = 1 - model.cost[practice]
-      new_q_value = max(0, agent.knowledge[practice] * modifier * cost_modifier)
-      agent.knowledge[practice] = min(new_q_value, 1)
-    end
+  for practice in model.practices
+    ΔQ = r * ΔQsocial[practice] + (1 - r) * ΔQlearn[practice]
+    agent.knowledge[practice] += ΔQ
+    agent.knowledge[practice] = min(max(agent.knowledge[practice], 0), 1)
   end
 
   return agent
+end
+
+"""
+
+The update to the q-values based on the communication between two agents
+"""
+function social_update(agent, other, model)
+  ΔQsocial = Dict(practice => 0.0 for practice in model.practices)
+  Qagent = agent.knowledge
+  Qother = other.knowledge
+
+  # check if the agents are similar enough to each other
+  dist = distance(agent, other)
+
+  threshold = model.similarity_threshold
+  if dist > threshold
+    return ΔQsocial
+  end
+
+  # if they are similar enough, update the opinion of agent based on the opinion of the 
+  # other
+  β = model.β
+  Δpayoff = other.payoff - agent.payoff
+
+  # weight the opinion of the other agent depending on the Δpayoff
+  weight = fermi(Δpayoff, β, 0)
+
+  for practice in model.practices
+    ΔQsocial[practice] = weight * (Qother[practice] - Qagent[practice])
+  end
+
+  return ΔQsocial
+end
+
+function learning_update(agent, model)
+  ΔQlearn = Dict(practice => 0.0 for practice in model.practices)
+  return ΔQlearn
 end
 
 function propagate_knowledge!(agent, other, model)
@@ -62,4 +88,8 @@ function propagate_knowledge!(agent, other, model)
     end
   end
   return agent, other
+end
+
+function fermi(x, β, mean)
+  return 1 - 1 / (exp(β * (x - mean)) + 1)
 end

@@ -12,3 +12,25 @@ using Agents
     previous_status::EpidemicStatus
     time_until_state_change::Float64
 end
+
+function distance(agent, other)
+    dist = 0.0
+    for practice in keys(agent.knowledge)
+        dist += (agent.knowledge[practice] - other.knowledge[practice])^2
+    end
+    return sqrt(dist)
+end
+
+function Base.show(io::IO, ::MIME"text/plain", agent::Agent)
+    status = agent.status
+    practices = collect(keys(agent.knowledge))
+    id = agent.id
+    println(io, "Agent #$id")
+    println(io, "status: $(agent.status)")
+    println(io, "policies:")
+    for practice in practices
+        isactive = agent.strategy[practice] ? "active" : "inactive"
+        println(io, "  $practice => $(round(agent.knowledge[practice]; digits=2)) ($isactive)")
+    end
+    println(io, "payoff: $(agent.payoff)")
+end

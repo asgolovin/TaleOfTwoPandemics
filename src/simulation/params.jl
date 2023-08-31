@@ -22,6 +22,15 @@ end
     # probability that an agent updates the q-values based on their own experience
     # TODO: rename
     r::Union{Float64,Vector{Float64}}
+    # Parameter controlling by how much are we moving towards the other person,
+    # even if the person has a lower payoff. 
+    # High = 
+    β::Union{Float64,Vector{Float64}}
+    # The minimum distance between two vectors of q-values that is needed for the 
+    # agents to listen to each other.
+    similarity_threshold::Union{Float64,Vector{Float64}}
+    # Minimum value of the q-value for the practice to become active
+    action_threshold::Union{Float64,Vector{Float64}}
     # practices and their objective effectiveness and cost
     action_space::Dict{String,NamedTuple{(:q_true, :cost),Tuple{Float64,Float64}}}
 end
