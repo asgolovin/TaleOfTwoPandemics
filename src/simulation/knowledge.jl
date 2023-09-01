@@ -8,6 +8,7 @@ function update_knowledge!(agent, other, model)
   for practice in model.practices
     ΔQ = r * ΔQsocial[practice] + (1 - r) * ΔQlearn[practice] + ΔQstoch[practice]
     agent.knowledge[practice] += ΔQ
+    # analytische funktion
     agent.knowledge[practice] = min(max(agent.knowledge[practice], 0), 1)
   end
 
