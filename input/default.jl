@@ -21,14 +21,14 @@ params = InputParams(
         action_space=Dict(
             "Praying" => (q_true=0.0, cost=-0.0),
             "Isolation" => (q_true=0.9, cost=-0.9),
-            "Homeopathy" => (q_true=0.1, cost=-0.8),
+            "Flagellation" => (q_true=0.1, cost=-0.8),
             "Handwashing" => (q_true=0.6, cost=-0.1),
-            "Sanitising" => (q_true=0.6, cost=-0.3),
+            #= "Sanitising" => (q_true=0.6, cost=-0.3),
             "Garlic" => (q_true=0.3, cost=-0.5),
             "Sauna" => (q_true=0.3, cost=-0.7),
             "ThroatWash" => (q_true=0.2, cost=-0.3),
             "Mask" => (q_true=0.4, cost=-0.5),
-            "ColdShower" => (q_true=0.2, cost=-0.4)
+            "ColdShower" => (q_true=0.2, cost=-0.4) =#
             
         )
     )
